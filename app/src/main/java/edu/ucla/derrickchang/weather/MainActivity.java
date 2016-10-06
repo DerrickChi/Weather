@@ -29,9 +29,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
+        // Generate testing numbers
+        double[] numbers = {22.0, 33.0, 33.0};
+
         // Example of a call to a native method
         TextView tv = (TextView) findViewById(R.id.sample_text);
-        tv.setText(Float.toString(cfConvertJNI()));
+        tv.setText(Double.toString(c2fJNI(numbers)[0]));
 
         // Get an instance of the sensor service, and use that to get an instance of
         // a particular sensor.
@@ -98,5 +101,5 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
-    public native float cfConvertJNI();
+    public native double[] c2fJNI(double[] numbers);
 }
