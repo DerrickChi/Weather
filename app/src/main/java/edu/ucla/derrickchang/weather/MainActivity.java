@@ -1,5 +1,10 @@
 package edu.ucla.derrickchang.weather;
 
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -7,7 +12,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener{
+    private SensorManager mSensorManager;
+    private Sensor mPressure;
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -25,6 +32,39 @@ public class MainActivity extends AppCompatActivity {
         // Example of a call to a native method
         TextView tv = (TextView) findViewById(R.id.sample_text);
         tv.setText(stringFromJNI());
+
+        // Get an instance of the sensor service, and use that to get an instance of
+        // a particular sensor.
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mPressure = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+
+    }
+
+    @Override
+    public final void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // Do something here if sensor accuracy changes.
+    }
+
+    @Override
+    public final void onSensorChanged(SensorEvent event) {
+        float millibars_of_pressure = event.values[0];
+        // Do something with this sensor data.
+        TextView tv = (TextView) findViewById(R.id.ambient_temp);
+        tv.setText("Current pressuer: " + Float.toString(millibars_of_pressure));
+    }
+
+    @Override
+    protected void onResume() {
+        // Register a listener for the sensor.
+        super.onResume();
+        mSensorManager.registerListener(this, mPressure, SensorManager.SENSOR_DELAY_UI);
+    }
+
+    @Override
+    protected void onPause() {
+        // Be sure to unregister the sensor when the activity pauses.
+        super.onPause();
+        mSensorManager.unregisterListener(this);
     }
 
     @Override
