@@ -14,20 +14,19 @@ Java_edu_ucla_derrickchang_weather_MainActivity_c2fJNI(
     jsize length = env->GetArrayLength(inJNIArray);
 
     // Step 2: Perform its intended operations
-    jint sum = 0;
     int i;
     for (i = 0; i < length; i++) {
-        sum += inCArray[i];
+        inCArray[i] = 1.8 * inCArray[i] + 32;
     }
-    jdouble average = (jdouble)sum / length;
-    env->ReleaseDoubleArrayElements(inJNIArray, inCArray, 0); // release resources
+    //jdouble average = (jdouble)sum / length;
+    //env->ReleaseDoubleArrayElements(inJNIArray, inCArray, 0); // release resources
 
-    jdouble outCArray[] = {sum, average};
+   // jdouble outCArray[] = {sum, average};
 
 
     // Step 3: Convert the C's Native jdouble[] to JNI jdoublearray, and return
-    jdoubleArray outJNIArray = env->NewDoubleArray(2);  // allocate
+    jdoubleArray outJNIArray = env->NewDoubleArray(length);  // allocate
     if (NULL == outJNIArray) return NULL;
-    env->SetDoubleArrayRegion(outJNIArray, 0 , 2, outCArray);  // copy
+    env->SetDoubleArrayRegion(outJNIArray, 0 , length, inCArray);  // copy
     return outJNIArray;
 }
