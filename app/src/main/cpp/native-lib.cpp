@@ -2,10 +2,12 @@
 #include <string>
 
 extern "C"
-jstring
-Java_edu_ucla_derrickchang_weather_MainActivity_stringFromJNI(
+jfloat
+Java_edu_ucla_derrickchang_weather_MainActivity_cfConvertJNI(
         JNIEnv *env,
         jobject /* this */) {
     std::string hello = "Hello from C++";
-    return env->NewStringUTF(hello.c_str());
+    jfloat result = 1.0;
+    return result;
+    //return env->NewStringUTF(hello.c_str());
 }
