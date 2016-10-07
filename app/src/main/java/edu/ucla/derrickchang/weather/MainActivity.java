@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        getSupportActionBar().setIcon(R.mipmap.ic_weather);
 
         tv = (TextView) findViewById(R.id.ambient_temp);
         tv1 = (TextView) findViewById(R.id.textViewMon);
