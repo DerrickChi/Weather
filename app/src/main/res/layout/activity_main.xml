@@ -61,7 +61,6 @@
             android:fontFamily="sans-serif-condensed"/>
 
         <TextView
-            android:text="TextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textViewMon"
@@ -87,7 +86,6 @@
             android:fontFamily="sans-serif-condensed"/>
 
         <TextView
-            android:text="TextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textViewTue"
@@ -113,7 +111,6 @@
             android:fontFamily="sans-serif-condensed"/>
 
         <TextView
-            android:text="TextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textViewWed"
@@ -139,7 +136,6 @@
             android:fontFamily="sans-serif-condensed"/>
 
         <TextView
-            android:text="TextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textViewThu"
@@ -165,7 +161,6 @@
             android:fontFamily="sans-serif-condensed"/>
 
         <TextView
-            android:text="TextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textViewFri"

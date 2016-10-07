@@ -1,7 +1,6 @@
 package edu.ucla.derrickchang.weather;
 
 import android.content.Context;
-import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -23,7 +22,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private double[] rawTemps = new double[6];
     private double[] showTemps = new double[6];
     private final static String NOT_SUPPORTED_MESSAGE = "n/a";//"!Sorry, sensor not available for this device!";
-
     private TextView tv, tv1, tv2, tv3, tv4, tv5;
 
 
@@ -88,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         showTemps = isC? rawTemps.clone() : c2fJNI(rawTemps);
 
         tv.setText(String.format("%1.0f ",showTemps[0])+ (isC? "\u2103" : "\u2109"));
-        Log.d("myTag", "New sensor reading!");
+        Log.d("myTag", "New sensor reading:" + Double.toString(rawTemps[0]));
 
     }
 
@@ -106,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mSensorManager.unregisterListener(this);
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.my_toolbar, menu);
@@ -118,18 +117,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         switch (item.getItemId()) {
             case R.id.action_convertCF:
                 // User chose the "Settings" item, show the app settings UI...
-                //startActivity(new Intent(this, SettingsActivity.class));
                 isC = !isC;
+                // Example of a call to a native method
                 showTemps = isC? rawTemps.clone() : c2fJNI(rawTemps);
                 updateUI();
                 return true;
 
         /*    case R.id.action_convert:
-                // User chose the "Favorite" action, mark the current item
-                // as a favorite...
+                // User chose the "Common Access" action
                 isC = !isC;
-
-                // Example of a call to a native method
                 showTemps = isC? rawTemps.clone() : c2fJNI(rawTemps);
                 updateUI();
                 return true;*/
