@@ -12,6 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.Random;
+
 public class MainActivity extends AppCompatActivity implements SensorEventListener{
     private SensorManager mSensorManager;
     private Sensor mPressure;
@@ -30,7 +32,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setSupportActionBar(myToolbar);
 
         // Generate testing numbers
-        double[] numbers = {22.0, 33.0, 33.0};
+        double[] numbers = new double[6];
+        Random rand = new Random();
+        for (int i=0; i<numbers.length; i++) {
+            numbers[i]=10.0 + (40.0 - 10.0) * rand.nextDouble();
+        }
 
         // Example of a call to a native method
         TextView tv = (TextView) findViewById(R.id.sample_text);
