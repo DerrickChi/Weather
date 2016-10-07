@@ -1,6 +1,7 @@
 package edu.ucla.derrickchang.weather;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -23,19 +24,25 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private double[] showTemps = new double[6];
     private final static String NOT_SUPPORTED_MESSAGE = "Sorry, sensor not available for this device.";
 
- /*   private TextView tv = (TextView) findViewById(R.id.ambient_temp);
-    private TextView tv1 = (TextView) findViewById(R.id.textViewMon);
-    private TextView tv2 = (TextView) findViewById(R.id.textViewTue);
-    private TextView tv3 = (TextView) findViewById(R.id.textViewWed);
-    private TextView tv4 = (TextView) findViewById(R.id.textViewThu);
-    private TextView tv5 = (TextView) findViewById(R.id.textViewFri);
-*/
-// private TextView tv5 = (TextView) findViewById(R.id.textViewFri);
+    private TextView tv;
+    private TextView tv1;
+    private TextView tv2;
+    private TextView tv3;
+    private TextView tv4;
+    private TextView tv5;
+
 
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
     }
+
+    /**
+     * A native method that is implemented by the 'native-lib' native library,
+     * which is packaged with this application.
+     */
+    public native double[] c2fJNI(double[] numbers);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,40 +52,30 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
-        // Generate testing numbers
+        tv = (TextView) findViewById(R.id.ambient_temp);
+        tv1 = (TextView) findViewById(R.id.textViewMon);
+        tv2 = (TextView) findViewById(R.id.textViewTue);
+        tv3 = (TextView) findViewById(R.id.textViewWed);
+        tv4 = (TextView) findViewById(R.id.textViewThu);
+        tv5 = (TextView) findViewById(R.id.textViewFri);
 
+        // Generate testing numbers
         Random rand = new Random();
         for (int i=0; i<rawTemps.length; i++) {
             rawTemps[i]=10.0 + (40.0 - 10.0) * rand.nextDouble();
         }
 
-        // Example of a call to a native method
-
-        TextView tv = (TextView) findViewById(R.id.ambient_temp);
-        TextView tv1 = (TextView) findViewById(R.id.textViewMon);
-        TextView tv2 = (TextView) findViewById(R.id.textViewTue);
-        TextView tv3 = (TextView) findViewById(R.id.textViewWed);
-        TextView tv4 = (TextView) findViewById(R.id.textViewThu);
-        TextView tv5 = (TextView) findViewById(R.id.textViewFri);
 
         showTemps = rawTemps.clone();
-
-
-        tv1.setText("Mon: " + String.format("%1.0f",showTemps[1]));
-        tv2.setText("Tue: " + String.format("%1.0f",showTemps[2]));
-        tv3.setText("Wed: " + String.format("%1.0f",showTemps[3]));
-        tv4.setText("Thu: " + String.format("%1.0f",showTemps[4]));
-        tv5.setText("Fri: " + String.format("%1.0f",showTemps[5]));
+        updateUI();
 
         // Get an instance of the sensor service, and use that to get an instance of
         // a particular sensor.
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mAmbientTemperature = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+        mAmbientTemperature = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         if (mAmbientTemperature == null) {
             tv.setText(NOT_SUPPORTED_MESSAGE);
         }
-
-
 
     }
 
@@ -90,19 +87,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public final void onSensorChanged(SensorEvent event) {
         // Do something with this sensor data.
-        rawTemps[0] = event.values[0];;
-        TextView tv = (TextView) findViewById(R.id.ambient_temp);
+        rawTemps[0] = event.values[0];
+        showTemps = isC? rawTemps.clone() : c2fJNI(rawTemps);
 
-        if (isC) {
-            showTemps = rawTemps.clone();
-        }
-        else {
-            showTemps = c2fJNI(rawTemps);
-        }
-
-
-            tv.setText("Ambient temperature: " + Double.toString(showTemps[0]));
-
+        tv.setText("Ambient temperature: " + String.format("%1.0f",showTemps[0]));
         Log.d("myTag", "New sensor reading!");
 
     }
@@ -133,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         switch (item.getItemId()) {
             case R.id.action_settings:
                 // User chose the "Settings" item, show the app settings UI...
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
 
             case R.id.action_convert:
@@ -140,28 +129,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 // as a favorite...
                 isC = !isC;
 
-
-                TextView tv = (TextView) findViewById(R.id.ambient_temp);
-                TextView tv1 = (TextView) findViewById(R.id.textViewMon);
-                TextView tv2 = (TextView) findViewById(R.id.textViewTue);
-                TextView tv3 = (TextView) findViewById(R.id.textViewWed);
-                TextView tv4 = (TextView) findViewById(R.id.textViewThu);
-                TextView tv5 = (TextView) findViewById(R.id.textViewFri);
-
-                if (isC) {
-                    showTemps = rawTemps.clone();
-                }
-                else {
-                    showTemps = c2fJNI(rawTemps);
-                }
-
-                tv.setText(": " + String.format("%1.0f",showTemps[0]));
-                tv1.setText("Mon: " + String.format("%1.0f",showTemps[1]));
-                tv2.setText("Tue: " + String.format("%1.0f",showTemps[2]));
-                tv3.setText("Wed: " + String.format("%1.0f",showTemps[3]));
-                tv4.setText("Thu: " + String.format("%1.0f",showTemps[4]));
-                tv5.setText("Fri: " + String.format("%1.0f",showTemps[5]));
-
+                // Example of a call to a native method
+                showTemps = isC? rawTemps.clone() : c2fJNI(rawTemps);
+                updateUI();
                 return true;
 
             default:
@@ -172,9 +142,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
-     */
-    public native double[] c2fJNI(double[] numbers);
+    public void updateUI(){
+        tv.setText("Ambient temperature: " + String.format("%1.0f",showTemps[0]));
+        tv1.setText("Mon: " + String.format("%1.0f",showTemps[1]));
+        tv2.setText("Tue: " + String.format("%1.0f",showTemps[2]));
+        tv3.setText("Wed: " + String.format("%1.0f",showTemps[3]));
+        tv4.setText("Thu: " + String.format("%1.0f",showTemps[4]));
+        tv5.setText("Fri: " + String.format("%1.0f",showTemps[5]));
+    }
+
+
 }
