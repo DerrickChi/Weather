@@ -116,12 +116,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.action_convertCF:
                 // User chose the "Settings" item, show the app settings UI...
-                startActivity(new Intent(this, SettingsActivity.class));
+                //startActivity(new Intent(this, SettingsActivity.class));
+                isC = !isC;
+                showTemps = isC? rawTemps.clone() : c2fJNI(rawTemps);
+                updateUI();
                 return true;
 
-            case R.id.action_convert:
+        /*    case R.id.action_convert:
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...
                 isC = !isC;
@@ -129,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 // Example of a call to a native method
                 showTemps = isC? rawTemps.clone() : c2fJNI(rawTemps);
                 updateUI();
-                return true;
+                return true;*/
 
             default:
                 // If we got here, the user's action was not recognized.

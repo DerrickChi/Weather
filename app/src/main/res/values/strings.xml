@@ -1,7 +1,7 @@
 <resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
     <string name="app_name">Weather</string>
     <string name="action_convert">cf_convertion</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_convertCF"> C &#x21C6; F </string>
     <string name="default_ambient_temp_str">n/a</string>
     <string name="title_activity_settings">Settings</string>
     <string name="now">Now</string>

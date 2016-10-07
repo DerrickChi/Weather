@@ -2,15 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <!-- "Mark Favorite", should appear as action button if possible -->
+    <!--
     <item
         android:id="@+id/action_convert"
         android:icon="@drawable/ic_convert"
         android:title="@string/action_convert"
         app:showAsAction="ifRoom"/>
-
+    -->
 
     <!-- Settings, should always be in the overflow -->
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+    <item android:id="@+id/action_convertCF"
+        android:title="@string/action_convertCF"
         app:showAsAction="never"/>
 </menu>
