@@ -22,14 +22,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private boolean isC = true;
     private double[] rawTemps = new double[6];
     private double[] showTemps = new double[6];
-    private final static String NOT_SUPPORTED_MESSAGE = "Sorry, sensor not available for this device.";
+    private final static String NOT_SUPPORTED_MESSAGE = "n/a";//"!Sorry, sensor not available for this device!";
 
-    private TextView tv;
-    private TextView tv1;
-    private TextView tv2;
-    private TextView tv3;
-    private TextView tv4;
-    private TextView tv5;
+    private TextView tv, tv1, tv2, tv3, tv4, tv5;
 
 
     // Used to load the 'native-lib' library on application startup.
@@ -72,7 +67,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // Get an instance of the sensor service, and use that to get an instance of
         // a particular sensor.
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mAmbientTemperature = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        mAmbientTemperature = mSensorManager.getDefaultSensor(Sensor.TYPE_TEMPERATURE);
+        // TYPE_AMBIENT_TEMPERATURE won't work
         if (mAmbientTemperature == null) {
             tv.setText(NOT_SUPPORTED_MESSAGE);
         }
@@ -90,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         rawTemps[0] = event.values[0];
         showTemps = isC? rawTemps.clone() : c2fJNI(rawTemps);
 
-        tv.setText("Ambient temperature: " + String.format("%1.0f",showTemps[0]));
+        tv.setText(String.format("%1.0f ",showTemps[0])+ (isC? "\u2103" : "\u2109"));
         Log.d("myTag", "New sensor reading!");
 
     }
@@ -143,12 +139,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public void updateUI(){
-        tv.setText("Ambient temperature: " + String.format("%1.0f",showTemps[0]));
-        tv1.setText("Mon: " + String.format("%1.0f",showTemps[1]));
-        tv2.setText("Tue: " + String.format("%1.0f",showTemps[2]));
-        tv3.setText("Wed: " + String.format("%1.0f",showTemps[3]));
-        tv4.setText("Thu: " + String.format("%1.0f",showTemps[4]));
-        tv5.setText("Fri: " + String.format("%1.0f",showTemps[5]));
+
+        if (mAmbientTemperature != null) {
+            tv.setText(String.format("%1.0f ",showTemps[0]) + (isC? "\u2103" : "\u2109"));
+        }
+        tv1.setText(String.format("%1.0f ",showTemps[1]) + (isC? "\u2103" : "\u2109"));
+        tv2.setText(String.format("%1.0f ",showTemps[2]) + (isC? "\u2103" : "\u2109"));
+        tv3.setText(String.format("%1.0f ",showTemps[3]) + (isC? "\u2103" : "\u2109"));
+        tv4.setText(String.format("%1.0f ",showTemps[4]) + (isC? "\u2103" : "\u2109"));
+        tv5.setText(String.format("%1.0f ",showTemps[5]) + (isC? "\u2103" : "\u2109"));
     }
 
 
