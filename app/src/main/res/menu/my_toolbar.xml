@@ -14,5 +14,5 @@
     <!-- Settings, should always be in the overflow -->
     <item android:id="@+id/action_convertCF"
         android:title="@string/action_convertCF"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 </menu>

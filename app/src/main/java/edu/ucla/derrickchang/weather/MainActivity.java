@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             rawTemps[i]=10.0 + (40.0 - 10.0) * rand.nextDouble();
         }
 
-
         showTemps = rawTemps.clone();
         updateUI();
 
@@ -73,6 +72,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
     }
+
+
+    @Override
+    protected void onResume() {
+        // Register a listener for the sensor.
+        super.onResume();
+        mSensorManager.registerListener(this, mAmbientTemperature, SensorManager.SENSOR_DELAY_UI);
+    }
+
+    @Override
+    protected void onPause() {
+        // Be sure to unregister the sensor when the activity pauses.
+        super.onPause();
+        mSensorManager.unregisterListener(this);
+    }
+
 
     @Override
     public final void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -88,20 +103,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         tv.setText(String.format("%1.0f ",showTemps[0])+ (isC? "\u2103" : "\u2109"));
         Log.d("myTag", "New sensor reading:" + Double.toString(rawTemps[0]));
 
-    }
-
-    @Override
-    protected void onResume() {
-        // Register a listener for the sensor.
-        super.onResume();
-        mSensorManager.registerListener(this, mAmbientTemperature, SensorManager.SENSOR_DELAY_UI);
-    }
-
-    @Override
-    protected void onPause() {
-        // Be sure to unregister the sensor when the activity pauses.
-        super.onPause();
-        mSensorManager.unregisterListener(this);
     }
 
 
