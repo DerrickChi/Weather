@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // Get an instance of the sensor service, and use that to get an instance of
         // a particular sensor.
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mAmbientTemperature = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+        mAmbientTemperature = mSensorManager.getDefaultSensor(Sensor.TYPE_TEMPERATURE);
         /**
          * For some reasons, TYPE_AMBIENT_TEMPERATURE won't work on most of the devices.
          * This app has been tested on the Android Emulator with Nexus 5, Android 5.1.1, API 22
