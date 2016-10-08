@@ -18,11 +18,11 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity implements SensorEventListener{
     private SensorManager mSensorManager;
     private Sensor mAmbientTemperature;
-    private boolean isC = true;
-    private double[] rawTemps = new double[6];
-    private double[] showTemps = new double[6];
-    private final static String NOT_SUPPORTED_MESSAGE = "n/a";//"!Sorry, sensor not available for this device!";
-    private TextView tv, tv1, tv2, tv3, tv4, tv5;
+    private boolean isC = true;                                 // A flag, if false then to the C->F conversion
+    private double[] rawTemps = new double[6];                  // Raw temperature in C
+    private double[] showTemps = new double[6];                 // Converted temperature in C or F
+    private final static String NOT_SUPPORTED_MESSAGE = "n/a";  // "Sorry, sensor not available for this device!";
+    private TextView tv, tv1, tv2, tv3, tv4, tv5;               // For displaying temperatures
 
 
     // Used to load the 'native-lib' library on application startup.
@@ -53,20 +53,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         tv4 = (TextView) findViewById(R.id.textViewThu);
         tv5 = (TextView) findViewById(R.id.textViewFri);
 
-        // Generate testing numbers
+        // Generate random numbers for temperature in the range [10,40]
         Random rand = new Random();
         for (int i=0; i<rawTemps.length; i++) {
             rawTemps[i]=10.0 + (40.0 - 10.0) * rand.nextDouble();
         }
 
-        showTemps = rawTemps.clone();
-        updateUI();
+        showTemps = rawTemps.clone(); // Default unit is in C, so just clone the values
+        updateUI();                   // Update temperatures for textviews
 
         // Get an instance of the sensor service, and use that to get an instance of
         // a particular sensor.
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mAmbientTemperature = mSensorManager.getDefaultSensor(Sensor.TYPE_TEMPERATURE);
-        // TYPE_AMBIENT_TEMPERATURE won't work
+        mAmbientTemperature = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+        /**
+         * For some reasons, TYPE_AMBIENT_TEMPERATURE won't work on most of the devices.
+         * This app has been tested on the Android Emulator with Nexus 5, Android 5.1.1, API 22
+         * Although the emulator provides virtual sensor "ambient temperature", it doesn't produce
+         * any sensor reading.
+         * One way to get around this is change the sensor type to "TYPE_TEMPERATURE"
+         */
+
         if (mAmbientTemperature == null) {
             tv.setText(NOT_SUPPORTED_MESSAGE);
         }
@@ -83,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     protected void onPause() {
-        // Be sure to unregister the sensor when the activity pauses.
+        // Unregister the sensor when the activity pauses.
         super.onPause();
         mSensorManager.unregisterListener(this);
     }
@@ -91,15 +98,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public final void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // Do something here if sensor accuracy changes.`
+        // Do something here if sensor accuracy changes.
     }
 
     @Override
     public final void onSensorChanged(SensorEvent event) {
-        // Do something with this sensor data.
+        // Update raw temperature
         rawTemps[0] = event.values[0];
+
+        // Call the native method if conversion is required.
         showTemps = isC? rawTemps.clone() : c2fJNI(rawTemps);
 
+        // Update UI
         tv.setText(String.format("%1.0f ",showTemps[0])+ (isC? "\u2103" : "\u2109"));
         Log.d("myTag", "New sensor reading:" + Double.toString(rawTemps[0]));
 
@@ -109,7 +119,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.my_toolbar, menu);
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -117,9 +126,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_convertCF:
-                // User chose the "Settings" item, show the app settings UI...
+                // User chose the "Settings" item, show the app settings UI.
+                // Toggle the flag
                 isC = !isC;
-                // Example of a call to a native method
+
+                // Call the native method if conversion is required.
                 showTemps = isC? rawTemps.clone() : c2fJNI(rawTemps);
                 updateUI();
                 return true;
